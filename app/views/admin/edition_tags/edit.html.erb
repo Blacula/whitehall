@@ -14,6 +14,14 @@
     <%= form_for @tag_form, url: admin_edition_tags_path(@edition), method: :put do |form| %>
       <%= form.hidden_field :previous_version %>
 
+      <%= form.label :select_topic_taxonomy, "Select topics" %>
+      <%= form.select :select_topic_taxonomy,
+                      options_from_collection_for_select(@topic_taxonomy.all_live_taxons, 'content_id', 'friendly_full_path'),
+                      { include_blank: true },
+                      multiple: true,
+                      class: 'chzn-select form-control',
+                      data: { placeholder: "Topics..."} %>
+
       <div class="form-group"
         data-module="taxonomy-tree-checkboxes"
         data-content-id="<%= @edition.content_id %>"

@@ -27,6 +27,10 @@ module Taxonomy
       @_visible_taxons = all_taxons.select(&:visible_to_departmental_editors)
     end
 
+    def all_live_taxons
+      @all_live_taxons ||= live.flat_map(&:taxon_list)
+    end
+
   private
 
     def branches

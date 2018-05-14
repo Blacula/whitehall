@@ -28,6 +28,10 @@ class TaxonomyTagForm
     selected_taxons - topic_taxonomy.visible_taxons.map(&:content_id)
   end
 
+  def select_topic_taxonomy
+    # No idea what this is for yet... Perhaps processing the selected taxons
+  end
+
 private
 
   def topic_taxonomy

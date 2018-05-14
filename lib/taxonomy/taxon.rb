@@ -48,6 +48,20 @@ module Taxonomy
       breadcrumb_trail.map { |t| { title: t.name } }
     end
 
+    def friendly_full_path
+      path_string = ""
+
+      full_path.each_with_index do |path_item, index|
+        path_string << path_item[:title]
+
+        if index + 1 != full_path.count
+          path_string << " > "
+        end
+      end
+
+      path_string
+    end
+
     def count
       taxon_list.count
     end
