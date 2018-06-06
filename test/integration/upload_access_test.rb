@@ -39,9 +39,4 @@ class UploadAccessTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to "http://#{asset_host}/government/uploads/system/uploads/attachment_data/file/123/attachment.pdf"
   end
-
-  test 'redirects requests for old consultation response form uploads to their new location as consultation response form data uploads' do
-    get_via_nginx '/government/uploads/system/uploads/consultation_response_form/something/anything/a-form.pdf'
-    assert_redirected_to '/government/uploads/system/uploads/consultation_response_form_data/something/anything/a-form.pdf'
-  end
 end
