@@ -28,7 +28,7 @@ private
 
   def upload_path
     basename = [params[:path], params[:format]].compact.join('.')
-    File.join(Whitehall.clean_uploads_root, 'uploaded', 'hmrc', basename)
+    File.join(Whitehall.hmrc_uploads_root, basename)
   end
 
   def real_path_for_x_accel_mapping(potentially_symlinked_path)

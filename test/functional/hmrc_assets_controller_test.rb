@@ -2,9 +2,8 @@ require "test_helper"
 
 class HmrcAssetsControllerTest < ActionController::TestCase
   test "does not redirect hmrc asset requests that aren't made via the asset host" do
-    hmrc_asset_directory = File.join(Whitehall.clean_uploads_root, 'uploaded', 'hmrc')
-    asset_filesystem_path = File.join(hmrc_asset_directory, 'asset.txt')
-    FileUtils.makedirs(hmrc_asset_directory)
+    asset_filesystem_path = File.join(Whitehall.hmrc_uploads_root, 'asset.txt')
+    FileUtils.makedirs(Whitehall.hmrc_uploads_root)
     FileUtils.touch(asset_filesystem_path)
 
     request.host = 'not-asset-host.com'

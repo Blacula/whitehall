@@ -98,6 +98,10 @@ module Whitehall
     Rails.root.join("tmp/test/env_#{env_number}")
   end
 
+  def self.hmrc_uploads_root
+    File.join(clean_uploads_root, 'uploaded', 'hmrc')
+  end
+
   def self.clean_uploads_root
     File.join(uploads_root, 'clean-uploads')
   end
