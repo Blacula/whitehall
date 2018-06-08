@@ -120,7 +120,6 @@ Then(/^I should be able to add attachments to the "(.*?)" corporate information 
   page_type = find_corporation_information_page_type_by_title(page_title)
   page = @user.organisation.corporate_information_pages.find_by_corporate_information_page_type_id(page_type.id)
   attachment = upload_pdf_to_corporate_information_page(page)
-  VirusScanHelpers.simulate_virus_scan(attachment.attachment_data.file)
   insert_attachment_markdown_into_corporate_information_page_body(attachment, page)
   Attachment.last.attachment_data.uploaded_to_asset_manager!
   publish(force: true)

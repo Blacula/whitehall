@@ -23,7 +23,6 @@ class AttachmentDraftStatusIntegrationTest < ActionDispatch::IntegrationTest
     before do
       setup_publishing_api_for(edition)
       attachable.attachments << attachment
-      VirusScanHelpers.simulate_virus_scan
       attachable.save!
     end
 
