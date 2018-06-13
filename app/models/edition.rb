@@ -431,10 +431,6 @@ class Edition < ApplicationRecord
     false
   end
 
-  def can_be_tagged_to_taxonomy?
-    false
-  end
-
   def can_be_tagged_to_worldwide_taxonomy?
     false
   end
