@@ -64,6 +64,8 @@ class Admin::DetailedGuidesControllerTest < ActionController::TestCase
       }
     )
 
+    stub_publishing_api_expanded_links_with_taxons(detailed_guide.content_id, [])
+
     get :show, params: { id: detailed_guide.id }
 
     assert_select "#user-needs-section" do |_section|
