@@ -166,11 +166,6 @@ module Whitehall
     @attachment_data_notifier ||= ActiveSupport::Notifications::Fanout.new
   end
 
-  def self.organisations_in_tagging_beta
-    @taggable_organisations ||=
-      YAML.load_file(Rails.root + "config/organisations_in_tagging_beta.yml")
-  end
-
   def self.worldwide_tagging_organisations
     @worldwide_taggable_organisations ||=
       YAML.load_file(Rails.root + "config/worldwide_tagging_organisations.yml")
