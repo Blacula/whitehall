@@ -5,6 +5,7 @@ class AttachmentRedirectDueToUnpublishingIntegrationTest < ActionDispatch::Integ
   extend Minitest::Spec::DSL
   include Capybara::DSL
   include Rails.application.routes.url_helpers
+  include TaxonomyHelper
 
   let(:filename) { 'sample.docx' }
   let(:file) { File.open(path_to_attachment(filename)) }
@@ -13,6 +14,7 @@ class AttachmentRedirectDueToUnpublishingIntegrationTest < ActionDispatch::Integ
   let(:asset_id) { 'asset-id' }
   let(:redirect_path) { Whitehall.url_maker.public_document_path(edition) }
   let(:redirect_url) { Whitehall.url_maker.public_document_url(edition) }
+  let(:topic_taxon) { build(:taxon_hash) }
 
   before do
     publishing_api_has_linkables([], document_type: 'topic')
@@ -30,6 +32,8 @@ class AttachmentRedirectDueToUnpublishingIntegrationTest < ActionDispatch::Integ
     let(:edition) { create(:published_news_article) }
 
     it 'sets redirect URL for attachment in Asset Manager when document is unpublished' do
+      stub_publishing_api_expanded_links_with_taxons(edition.content_id, [])
+
       visit admin_news_article_path(edition)
       unpublish_document_published_in_error
       logout
@@ -39,6 +43,8 @@ class AttachmentRedirectDueToUnpublishingIntegrationTest < ActionDispatch::Integ
     end
 
     it 'sets redirect URL for attachment in Asset Manager when document is consolidated' do
+      stub_publishing_api_expanded_links_with_taxons(edition.content_id, [])
+
       visit admin_news_article_path(edition)
       consolidate_document
       logout
@@ -48,6 +54,8 @@ class AttachmentRedirectDueToUnpublishingIntegrationTest < ActionDispatch::Integ
     end
 
     it 'resets redirect URI for attachment in Asset Manager when document is withdrawn' do
+      stub_publishing_api_expanded_links_with_taxons(edition.content_id, [])
+
       visit admin_news_article_path(edition)
       withdraw_document
       logout
@@ -63,6 +71,8 @@ class AttachmentRedirectDueToUnpublishingIntegrationTest < ActionDispatch::Integ
     let(:attachable) { edition.create_outcome!(outcome_attributes) }
 
     it 'sets redirect URL for attachment in Asset Manager when document is unpublished' do
+      stub_publishing_api_expanded_links_with_taxons(edition.content_id, [])
+
       visit admin_consultation_path(edition)
       unpublish_document_published_in_error
       logout
@@ -72,6 +82,8 @@ class AttachmentRedirectDueToUnpublishingIntegrationTest < ActionDispatch::Integ
     end
 
     it 'resets redirect URI for attachment in Asset Manager when document is withdrawn' do
+      stub_publishing_api_expanded_links_with_taxons(edition.content_id, [])
+
       visit admin_consultation_path(edition)
       withdraw_document
       logout
@@ -87,6 +99,8 @@ class AttachmentRedirectDueToUnpublishingIntegrationTest < ActionDispatch::Integ
     let(:attachable) { edition.create_public_feedback!(feedback_attributes) }
 
     it 'sets redirect URL for attachment in Asset Manager when document is unpublished' do
+      stub_publishing_api_expanded_links_with_taxons(edition.content_id, [])
+
       visit admin_consultation_path(edition)
       unpublish_document_published_in_error
       logout
@@ -96,6 +110,8 @@ class AttachmentRedirectDueToUnpublishingIntegrationTest < ActionDispatch::Integ
     end
 
     it 'resets redirect URI for attachment in Asset Manager when document is withdrawn' do
+      stub_publishing_api_expanded_links_with_taxons(edition.content_id, [])
+
       visit admin_consultation_path(edition)
       withdraw_document
       logout
@@ -109,6 +125,9 @@ class AttachmentRedirectDueToUnpublishingIntegrationTest < ActionDispatch::Integ
     let(:edition) { create(:news_article, :unpublished) }
 
     it 'resets redirect URI for attachment in Asset Manager when document is published' do
+      stub_publishing_api_expanded_links_with_taxons(edition.content_id, [])
+      stub_publishing_api_links_with_taxons(edition.content_id, [topic_taxon["content_id"]])
+
       visit admin_news_article_path(edition)
       force_publish_document
       logout
@@ -124,6 +143,9 @@ class AttachmentRedirectDueToUnpublishingIntegrationTest < ActionDispatch::Integ
     let(:attachable) { edition.create_outcome!(outcome_attributes) }
 
     it 'resets redirect URI for attachment in Asset Manager when document is published' do
+      stub_publishing_api_expanded_links_with_taxons(edition.content_id, [])
+      stub_publishing_api_links_with_taxons(edition.content_id, [topic_taxon["content_id"]])
+
       visit admin_consultation_path(edition)
       force_publish_document
       logout
@@ -137,6 +159,8 @@ class AttachmentRedirectDueToUnpublishingIntegrationTest < ActionDispatch::Integ
     let(:edition) { create(:news_article, :published, :withdrawn) }
 
     it 'resets redirect URI for attachment in Asset Manager when document is unwithdrawn' do
+      stub_publishing_api_expanded_links_with_taxons(edition.content_id, [])
+
       visit admin_news_article_path(edition)
       unwithdraw_document
       logout
@@ -152,6 +176,8 @@ class AttachmentRedirectDueToUnpublishingIntegrationTest < ActionDispatch::Integ
     let(:attachable) { edition.create_outcome!(outcome_attributes) }
 
     it 'resets redirect URI for attachment in Asset Manager when document is unwithdrawn' do
+      stub_publishing_api_expanded_links_with_taxons(edition.content_id, [])
+
       visit admin_consultation_path(edition)
       unwithdraw_document
       logout

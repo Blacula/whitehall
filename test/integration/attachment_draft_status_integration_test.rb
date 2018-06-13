@@ -5,9 +5,11 @@ class AttachmentDraftStatusIntegrationTest < ActionDispatch::IntegrationTest
   extend Minitest::Spec::DSL
   include Capybara::DSL
   include Rails.application.routes.url_helpers
+  include TaxonomyHelper
 
   let(:filename) { 'sample.docx' }
   let(:asset_id) { 'asset-id' }
+  let(:topic_taxon) { build(:taxon_hash) }
 
   before do
     login_as create(:managing_editor)
@@ -31,6 +33,9 @@ class AttachmentDraftStatusIntegrationTest < ActionDispatch::IntegrationTest
       let(:asset_initially_draft) { true }
 
       it 'marks attachment as published in Asset Manager when document is published' do
+        stub_publishing_api_expanded_links_with_taxons(edition.content_id, [])
+        stub_publishing_api_links_with_taxons(edition.content_id, [topic_taxon["content_id"]])
+
         visit admin_news_article_path(edition)
         force_publish_document
         assert_sets_draft_status_in_asset_manager_to false
@@ -42,6 +47,8 @@ class AttachmentDraftStatusIntegrationTest < ActionDispatch::IntegrationTest
       let(:asset_initially_draft) { false }
 
       it 'does not mark attachment as draft in Asset Manager when document is unpublished' do
+        stub_publishing_api_expanded_links_with_taxons(edition.content_id, [])
+
         visit admin_news_article_path(edition)
         unpublish_document_published_in_error
         refute_sets_draft_status_in_asset_manager_to true
@@ -55,6 +62,9 @@ class AttachmentDraftStatusIntegrationTest < ActionDispatch::IntegrationTest
       let(:asset_initially_draft) { true }
 
       it 'marks attachment as published in Asset Manager when consultation is published' do
+        stub_publishing_api_expanded_links_with_taxons(edition.content_id, [])
+        stub_publishing_api_links_with_taxons(edition.content_id, [topic_taxon["content_id"]])
+
         visit admin_consultation_path(edition)
         force_publish_document
         assert_sets_draft_status_in_asset_manager_to false
@@ -68,6 +78,9 @@ class AttachmentDraftStatusIntegrationTest < ActionDispatch::IntegrationTest
       let(:asset_initially_draft) { true }
 
       it 'marks attachment as published in Asset Manager when consultation is published' do
+        stub_publishing_api_expanded_links_with_taxons(edition.content_id, [])
+        stub_publishing_api_links_with_taxons(edition.content_id, [topic_taxon["content_id"]])
+
         visit admin_consultation_path(edition)
         force_publish_document
         assert_sets_draft_status_in_asset_manager_to false
