@@ -125,6 +125,7 @@ Then(/^the new data file should not have replaced the old data file$/) do
 end
 
 When(/^I published the draft edition$/) do
+  stub_publishing_api_links_with_taxons(@new_edition.content_id, ["a-taxon-content-id"])
   visit admin_publication_path(@new_edition)
   publish(force: true)
 end
