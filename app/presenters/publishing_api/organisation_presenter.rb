@@ -28,14 +28,15 @@ module PublishingApi
       ).base_attributes
 
       content.merge!(
+        base_path: base_path,
         description: nil,
         details: details,
         document_type: item.class.name.underscore,
         public_updated_at: item.updated_at,
         rendering_app: rendering_app,
+        routes: routes,
         schema_name: schema_name,
       )
-      content.merge!(PayloadBuilder::PolymorphicPath.for(item))
       content.merge!(PayloadBuilder::AnalyticsIdentifier.for(item))
     end
 
@@ -59,11 +60,23 @@ module PublishingApi
     end
 
     def rendering_app
-      if item.organisation_type.court?
+      if court_or_tribunal?
         Whitehall::RenderingApp::WHITEHALL_FRONTEND
       else
         Whitehall::RenderingApp::COLLECTIONS_FRONTEND
       end
+    end
+
+    def base_path
+      @base_path ||= Whitehall.url_maker.polymorphic_path(item)
+    end
+
+    def routes
+      [{ path: base_path, type: "exact" }]
+    end
+
+    def court_or_tribunal?
+      base_path.start_with? "/courts"
     end
 
     def details

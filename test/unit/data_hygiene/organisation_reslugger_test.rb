@@ -36,6 +36,7 @@ module OrganisationResluggerTest
       content = content_item.content
       content[:base_path] = new_base_path
       content[:routes][0][:path] = new_base_path
+      content[:routes][1][:path] = "#{new_base_path}.atom" if content[:routes].count > 1
       content_item.stubs(content: content)
 
       expected_publish_requests = [
