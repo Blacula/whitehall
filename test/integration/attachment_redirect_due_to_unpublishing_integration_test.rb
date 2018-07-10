@@ -13,10 +13,11 @@ class AttachmentRedirectDueToUnpublishingIntegrationTest < ActionDispatch::Integ
   let(:asset_id) { 'asset-id' }
   let(:redirect_path) { Whitehall.url_maker.public_document_path(edition) }
   let(:redirect_url) { Whitehall.url_maker.public_document_url(edition) }
+  let(:user) { create(:managing_editor) }
 
   before do
     publishing_api_has_linkables([], document_type: 'topic')
-    login_as create(:managing_editor)
+    login_as user
     setup_publishing_api_for(edition)
     attachable.attachments << attachment
     VirusScanHelpers.simulate_virus_scan
@@ -51,6 +52,7 @@ class AttachmentRedirectDueToUnpublishingIntegrationTest < ActionDispatch::Integ
     it 'resets redirect URI for attachment in Asset Manager when document is withdrawn' do
       visit admin_news_article_path(edition)
       withdraw_document
+      edition.create_draft(user)
       logout
       get attachment.url
       assert_response :success
@@ -142,6 +144,18 @@ class AttachmentRedirectDueToUnpublishingIntegrationTest < ActionDispatch::Integ
       unwithdraw_document
       logout
       get attachment.url
+      assert_response :success
+      assert_sets_redirect_url_in_asset_manager_to nil
+    end
+
+    it 'doesn\'t apply a redirect when a draft is created on top of an unwithdrawn document' do
+      visit admin_news_article_path(edition)
+      unwithdraw_document
+      draft = attachable.document.latest_edition.create_draft(user)
+      file_for_draft = File.open(path_to_attachment("simple.pdf"))
+      logout
+      draft_attachment = build(:file_attachment, attachable: draft, file: file_for_draft)
+      get draft_attachment.url
       assert_response :success
       assert_sets_redirect_url_in_asset_manager_to nil
     end
