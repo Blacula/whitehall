@@ -4,7 +4,6 @@ class AssetManagerAttachmentDataWorker < WorkerBase
   def perform(attachment_data_id)
     attachment_data = AttachmentData.find(attachment_data_id)
     return unless attachment_data.uploaded_to_asset_manager_at
-
     draft_status_updater attachment_data_id
     redirect_url_updater attachment_data_id
     link_header_updater attachment_data_id

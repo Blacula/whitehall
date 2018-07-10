@@ -75,4 +75,19 @@ class AssetManagerAttachmentRedirectUrlUpdateWorkerTest < ActiveSupport::TestCas
       end
     end
   end
+  context 'when attachment is a draft' do
+    let(:simple_pdf) { File.open(fixture_path.join('sample.docx')) }
+    let(:attachment) { FactoryBot.create(:file_attachment, file: simple_pdf) }
+
+    before do
+      attachment_data.stubs(:draft?).returns(true)
+      AttachmentData.stubs(:find_by).with(id: attachment_data.id).returns(attachment_data)
+    end
+
+    it 'doesn\'t set a redirect url' do
+      worker.expects(:perform)
+        .with(attachment_data.id)
+      worker.perform(attachment_data.id)
+    end
+  end
 end
