@@ -3,8 +3,8 @@ class AssetManagerAttachmentRedirectUrlUpdateWorker < WorkerBase
 
   def perform(attachment_data_id)
     attachment_data = AttachmentData.find_by(id: attachment_data_id)
-    return if redirect_not_needed?(attachment_data)
     redirect_url = nil
+    return if redirect_not_needed?(attachment_data)
     if attachment_data.unpublished?
       redirect_url = attachment_data.unpublished_edition.unpublishing.document_url
     end

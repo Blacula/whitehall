@@ -119,6 +119,18 @@ class AttachmentRedirectDueToUnpublishingIntegrationTest < ActionDispatch::Integ
       assert_response :success
       assert_sets_redirect_url_in_asset_manager_to nil
     end
+
+    it 'resets redirect URI for attachment in Asset Manager when draft is created' do
+      visit admin_news_article_path(edition)
+      unpublish_document_published_in_error
+      draft = attachable.document.latest_edition
+      attachment_data_for_draft = File.open(path_to_attachment("simple.pdf"))
+      logout
+      draft_attachment = build(:file_attachment, attachable: draft, file: attachment_data_for_draft)
+      get draft_attachment.url
+      assert_response :success
+      assert_sets_redirect_url_in_asset_manager_to nil
+    end
   end
 
   context 'given an unpublished consultation with outcome with file attachment' do
@@ -144,18 +156,6 @@ class AttachmentRedirectDueToUnpublishingIntegrationTest < ActionDispatch::Integ
       unwithdraw_document
       logout
       get attachment.url
-      assert_response :success
-      assert_sets_redirect_url_in_asset_manager_to nil
-    end
-
-    it 'doesn\'t apply a redirect when a draft is created on top of an unwithdrawn document' do
-      visit admin_news_article_path(edition)
-      unwithdraw_document
-      draft = attachable.document.latest_edition.create_draft(user)
-      file_for_draft = File.open(path_to_attachment("simple.pdf"))
-      logout
-      draft_attachment = build(:file_attachment, attachable: draft, file: file_for_draft)
-      get draft_attachment.url
       assert_response :success
       assert_sets_redirect_url_in_asset_manager_to nil
     end
