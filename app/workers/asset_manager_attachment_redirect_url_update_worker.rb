@@ -3,8 +3,8 @@ class AssetManagerAttachmentRedirectUrlUpdateWorker < WorkerBase
 
   def perform(attachment_data_id)
     attachment_data = AttachmentData.find_by(id: attachment_data_id)
+    return unless attachment_data.present?
     redirect_url = nil
-    return if redirect_not_needed?(attachment_data)
     if attachment_data.unpublished?
       redirect_url = attachment_data.unpublished_edition.unpublishing.document_url
     end
@@ -21,7 +21,5 @@ private
     AssetManagerUpdateAssetWorker.new.perform(attachment_data, legacy_url_path, 'redirect_url' => redirect_url)
   end
 
-  def redirect_not_needed?(attachment_data)
-    attachment_data.blank? || attachment_data.draft?
-  end
+  # if it's a draft and its previous edition was unpublished
 end
