@@ -1,7 +1,6 @@
 module ServiceListeners
   class AttachmentUpdater
     def self.call(attachable: nil, attachment_data: nil)
-      binding.pry
       update_attachable! attachable if attachable
       update_attachment_data! attachment_data if attachment_data
     end

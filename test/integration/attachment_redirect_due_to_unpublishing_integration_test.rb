@@ -121,18 +121,12 @@ class AttachmentRedirectDueToUnpublishingIntegrationTest < ActionDispatch::Integ
     end
 #MAKE THE TEST BELOW PASS
     it 'resets redirect URI for attachment in Asset Manager when a new attachment is added to draft' do
-      visit admin_news_article_path(edition)
-      click_link "Edit draft"
-      new_attachment_data_for_draft = File.open(path_to_attachment("simple.pdf"))
-      new_attachment = build(:file_attachment, attachable: attachable, file: new_attachment_data_for_draft)
-      attachable.attachments << attachment
-      VirusScanHelpers.simulate_virus_scan
-      stub_whitehall_asset(filename, id: asset_id)
-      attachable.save!
-      logout
-      get new_attachment.url
-      assert_response :success
+      setup_publishing_api_for(edition)
+      stub_whitehall_asset("simple.pdf", id: 'asset-id')
+      visit admin_edition_attachments_path(edition)
+      add_attachment("simple.pdf")
       assert_sets_redirect_url_in_asset_manager_to nil
+      edition.save!
     end
   end
 
@@ -247,5 +241,13 @@ private
     click_link 'Unwithdraw'
     click_button 'Unwithdraw'
     assert_text 'This document has been unwithdrawn'
+  end
+
+  def add_attachment(filename)
+    click_link 'Upload new file attachment'
+    fill_in 'Title', with: 'Attachment Title'
+    attach_file 'File', path_to_attachment(filename)
+    click_button 'Save'
+    assert_text "Attachment 'Attachment Title' uploaded"
   end
 end

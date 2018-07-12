@@ -2,10 +2,19 @@ class AssetManagerAttachmentRedirectUrlUpdateWorker < WorkerBase
   sidekiq_options queue: 'asset_manager'
 
   def perform(attachment_data_id)
+    # binding.pry
     attachment_data = AttachmentData.find_by(id: attachment_data_id)
     return unless attachment_data.present?
     redirect_url = nil
-    if attachment_data.unpublished?
+    binding.pry
+    # def unpublishing?
+    #   !publicly_visible? && unpublishing.present?
+    # end
+    #
+    # attachment_data.attachments[0].id
+    # Attachment.find(1)
+
+    if attachment_data.unpublished? #&& !attachment_data.draft? && !attachment_data.published?
       redirect_url = attachment_data.unpublished_edition.unpublishing.document_url
     end
     enqueue_job(attachment_data, attachment_data.file, redirect_url)
