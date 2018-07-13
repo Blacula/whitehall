@@ -120,7 +120,18 @@ class AttachmentRedirectDueToUnpublishingIntegrationTest < ActionDispatch::Integ
       assert_sets_redirect_url_in_asset_manager_to nil
     end
 #MAKE THE TEST BELOW PASS
+  end
+
+  context 'given an unpublished document with file attachment' do
+    let(:edition) { create(:news_article, :published) }
     it 'resets redirect URI for attachment in Asset Manager when a new attachment is added to draft' do
+      visit admin_news_article_path(edition)
+      unpublish_document_published_in_error
+
+      edition = create(:news_article, :published)
+      unpublish_document_published_in_error
+      binding.pry
+      edition = document.latest_edition
       setup_publishing_api_for(edition)
       stub_whitehall_asset("simple.pdf", id: 'asset-id')
       visit admin_edition_attachments_path(edition)
